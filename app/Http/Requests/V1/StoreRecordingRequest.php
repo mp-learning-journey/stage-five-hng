@@ -11,7 +11,7 @@ class StoreRecordingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreRecordingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'file' => ['file','mimes:mp4,avi,wmv', 'max:20480', 'required'],
         ];
     }
 }

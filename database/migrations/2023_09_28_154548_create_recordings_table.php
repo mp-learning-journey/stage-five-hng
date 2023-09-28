@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('recordings', function (Blueprint $table) {
             $table->uuid();
-            $table->string('url');
-            $table->string('name');
+            $table->string('file');
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->string('slug');
             $table->string('file_name');
             $table->string('file_size');
             $table->timestamps();
