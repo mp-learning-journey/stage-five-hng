@@ -26,18 +26,25 @@ class RecordingController extends Controller
     public function store(StoreRecordingRequest $request)
     {
         try {
-            $upload = FileHelper::upload($request->file, 'videos');
+            $upload = FileHelper::upload($request->file, 'videos'); // returns uploaded file name
             if ($upload) {
                 // save in db
-                $
+                $request->file = $upload;
+                $store = Recording::create($request->validated());
             }
+
+            return response()->json([
+                'message' => 'video recording uploaded successfully',
+                'statusCode' => 201,
+                'data' => $store
+            ], 201);
         }
         catch(ValidationException $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json(['error' => $exception->getMessage(), 'statusCode' => 422], 422);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             Log::error($e);
-            return response()->json(['error' => 'Oops something went wrong'], 500);
+            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
         }
     }
 
