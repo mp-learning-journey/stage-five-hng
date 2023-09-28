@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('recordings', function (Blueprint $table) {
-            $table->uuid();
-            $table->string('file');
+            $table->uuid('id')->primary();
+            $table->string('file_location');
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();

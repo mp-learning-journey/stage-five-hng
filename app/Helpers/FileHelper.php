@@ -8,28 +8,32 @@ use Illuminate\Support\Facades\Storage;
 
 class FileHelper {
     public static function formatName($filename): string {
-        return time() . '_' .str_replace(' ','_', $filename);
+        return time() . '_' .str_replace(' ','_', strtolower($filename));
     }
 
     /**
      * store file in storage and return file name
-     * @param UploadedFile $image
+     * @param UploadedFile $file
      * @param string $folderName folder name to store file. Leave empty to store in public folder
-     * @return \Illuminate\Http\JsonResponse|string
+     * @return bool|object
      */
-    public static function upload(UploadedFile $image, string $folderName = null) {
+    public static function upload(UploadedFile $file, string $folderName = '') {
         try{
-            $folderName = $folderName ? $folderName ."/" : '';
-            $imageName = $folderName. self::formatName($image->getClientOriginalName());
+            $name = $file->getClientOriginalName(); // name of uploaded file
+            $size = $file->getSize(); // size in bytes
+            $fileName = $folderName."/" . self::formatName($name);
 
             // Store the résumé in the 'public' disk (storage/app/public)
-            Storage::disk('public')->put($imageName, file_get_contents($image));
+            Storage::disk('public')->put($fileName, file_get_contents($file));
 
-            return $imageName;
+            return (object)[
+                'file' => $fileName,
+                'fileName' => $name,
+                'fileSize' => $size
+            ];
         }
         catch (\Exception $e) {
-            Log::error($e);
-            return response()->json(['error' => 'Oops! Could not upload file'], 500);
+            return false;
         }
 
     }

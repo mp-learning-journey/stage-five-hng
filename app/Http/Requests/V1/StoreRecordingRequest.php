@@ -25,6 +25,7 @@ class StoreRecordingRequest extends FormRequest
             'name' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'file' => ['file','mimes:mp4,avi,wmv', 'max:20480', 'required'],
+            'thumbnail' => ['image','mimes:png,jpg,jpeg', 'max:2048', 'nullable'],
         ];
     }
 }
