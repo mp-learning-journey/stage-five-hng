@@ -40,7 +40,7 @@
 
 ### Key Features <a name="key-features"></a>
 
-- **[Save and send video recordings]**
+- [x] Save and send video recordings
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -54,14 +54,6 @@ To access the documentation, run the server using `php artisan serve` and goto t
 
 <br/>
 
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- Link to frontend -->
-
-## 🚀 Link to Front-end <a name="front-end"></a>
-
-- [Link to Front-end](https://github.com/mrprotocoll/resplify)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
