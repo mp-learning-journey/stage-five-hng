@@ -1,5 +1,5 @@
 <div align="center">
-  <h2><b>🕹️🕹️ Resplify API 🕹️🕹️</b></h2>
+  <h2><b>🕹️🕹️ HNG Chrome Extension API 🕹️🕹️</b></h2>
   <br/>
 </div>
 
@@ -25,7 +25,7 @@
 
 <!-- PROJECT DESCRIPTION -->
 
-# 📖 Resplify API <a name="about-project"></a>
+# 📖 HNG Chrome Extension API <a name="about-project"></a>
 
 **[HNG Chrome Extension API]** is the backend application designed for HNG Chrome Extension. A chrome extension for screen recording.
 
@@ -40,8 +40,7 @@
 
 ### Key Features <a name="key-features"></a>
 
-- **[User Registration and Authentication]**
-- **[resume generator and review]**
+- **[Save and send video recordings]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
