@@ -19,4 +19,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('recordings', RecordingController::class)->only(['store', 'index', 'show', 'destroy']);
+Route::post('recordings', [RecordingController::class, 'store']);
+Route::get('recordings', [RecordingController::class, 'index']);
+Route::get('recordings/{id}', [RecordingController::class, 'show']);
+Route::delete('recordings/{id}', [RecordingController::class, 'destroy']);

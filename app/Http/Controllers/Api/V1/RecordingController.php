@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreRecordingRequest;
 use App\Http\Resources\V1\RecordingResource;
 use App\Models\Recording;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
@@ -283,10 +284,11 @@ class RecordingController extends Controller
      *     ),
      * )
      */
-    public function show(Recording $recording)
+    public function show(string $id)
     {
         try{
-            if(!$recording->exists()){
+            $recording = Recording::find($id);
+            if(!$recording){
                 return response()->json(['error' => 'Recording not found', 'statusCode' => 404], 404);
             }
             return new RecordingResource($recording);
@@ -360,10 +362,11 @@ class RecordingController extends Controller
      *     ),
      * )
      */
-    public function destroy(Recording $recording): \Illuminate\Http\JsonResponse
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
+        $recording = Recording::find($id);
         try {
-            if(!$recording->exists()){
+            if(!$recording){
                 return response()->json(['error' => 'Recording not found', 'statusCode' => 404], 404);
             }
 

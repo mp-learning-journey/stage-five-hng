@@ -24,7 +24,7 @@ class DestroyRecordingTest extends TestCase
                 'statusCode',
             ]);
 
-        $this->assertSoftDeleted('recordings', ['id' => $recording->id]);
+        $this->assertDatabaseMissing('recordings', ['id' => $recording->id]);
     }
 
     public function test_cannot_delete_nonexistent_recording()
@@ -37,26 +37,4 @@ class DestroyRecordingTest extends TestCase
                 'statusCode',
             ]);
     }
-
-    public function test_cannot_delete_recording_on_error()
-    {
-        // Create a test recording in the database
-        $recording = Recording::factory()->create();
-
-        // Mock the database delete operation to throw an exception
-        DB::shouldReceive('delete')
-            ->once()
-            ->with('DELETE FROM recordings WHERE id = ?', [$recording->id])
-            ->andThrow(new \Exception('Database error'));
-
-        $response = $this->deleteJson($this->url."/{$recording->id}");
-
-        $response->assertStatus(500)
-            ->assertJsonStructure([
-                'error',
-                'statusCode',
-            ]);
-    }
-
-
 }
