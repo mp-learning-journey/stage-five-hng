@@ -1,5 +1,5 @@
 <div align="center">
-  <h2><b>🕹️🕹️ HNG Chrome Extension API 🕹️🕹️</b></h2>
+  <h2><b>🕹️🕹️ HNG Screen Recording Chrome Extension API 🕹️🕹️</b></h2>
   <br/>
 </div>
 
@@ -50,7 +50,7 @@
 
 To access the documentation, run the server using `php artisan serve` and goto the above link
 
-- [Link to api documentation](https://localhost:8000/docs/)
+- [Link to api documentation](https://hngs5.mrprotocoll.me/api/documentation)
 
 <br/>
 
@@ -88,7 +88,7 @@ In order to run this project you need:
 Clone repo:
 
 ```
-git clone https://github.com/mrprotocoll/resplify.git
+git clone https://github.com/mp-learning-journey/stage-five-hng.git
 ```
 
 Install dependencies:
