@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Recording;
 
+use App\Helpers\FileHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -23,9 +24,10 @@ class StoreRecordingTest extends TestCase
     {
         Storage::fake('videos'); // Use the videos folder in the disk for mocking file
         Storage::fake('thumbnails');
-
-        $file = UploadedFile::fake()->create('video.mp4', 10240); // Create a fake video file (10MB)
-        $thumbnail = UploadedFile::fake()->image('thumbnail.png', 100, 100); // Create a fake thumbnail image
+        $fileName = 'video.mp4';
+        $image = 'thumbnail.png';
+        $file = UploadedFile::fake()->create($fileName, 10240); // Create a fake video file (10MB)
+        $thumbnail = UploadedFile::fake()->image($image, 100, 100); // Create a fake thumbnail image
 
         $response = $this->postJson($this->url, [
             'file' => $file,
@@ -50,8 +52,8 @@ class StoreRecordingTest extends TestCase
             ]);
 
         // Verify that the file and thumbnail were stored
-//        Storage::disk('videos')->assertExists($file->hashName());
-//        Storage::disk('thumbnails')->assertExists($thumbnail->hashName());
+        Storage::disk('public')->assertExists('videos/'.FileHelper::formatName($fileName));
+        Storage::disk('public')->assertExists('thumbnails/'.FileHelper::formatName($image));
 
         // Verify that the recording was stored in the database
         $this->assertDatabaseHas('recordings', [
