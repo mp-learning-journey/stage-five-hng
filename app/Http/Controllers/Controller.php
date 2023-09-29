@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
  * @OA\Info(title="HNG Chrome extension - Screen Recording API", version="1.0"),
  * @OA\Server(
  *    description="Base URL",
- *    url="http://localhost:8000"
+ *    url="https://hngs5.mrprotocoll.me"
  *  )
  */
 class Controller extends BaseController
