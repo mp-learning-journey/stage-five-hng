@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreRecordingRequest;
 use App\Http\Resources\V1\RecordingResource;
 use App\Models\Recording;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
@@ -16,69 +15,94 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @OA\Schema(
+ *     schema="RecordingResource",
+ *     @OA\Property(property="id", type="string", format="uuid", example="9a3e8d15-b805-4309-989b-bba4f78a9248"),
+ *     @OA\Property(property="title", type="string", example="Kizz Daniel - Jaho (Official Video)"),
+ *     @OA\Property(property="url", type="string", format="uri", example="http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"),
+ *     @OA\Property(property="description", type="string", nullable=true, example=null),
+ *     @OA\Property(property="fileName", type="string", example="Kizz Daniel - Jaho (Official Video).mp4"),
+ *     @OA\Property(property="fileSize", type="string", example="10690611"),
+ *     @OA\Property(property="thumbnail", type="string", format="uri", nullable=true, example=null),
+ *     @OA\Property(property="slug", type="string", example="kizz-daniel-jaho-official-video"),
+ *     @OA\Property(property="createdAt", type="string", format="date-time", example="2023-09-28T20:54:16.000000Z")
+ * ),
+ * @OA\Schema(
+ *      schema="RecordingRequest",
+ *      type="object",
+ *      description="Recording request data",
+ *      @OA\Property(property="title", type="string", example="Sample Title", nullable=true),
+ *      @OA\Property(property="description", type="string", example="Description of the recording", nullable=true),
+ *      @OA\Property(property="file", type="string", format="binary", description="The video file to upload", nullable=false),
+ *      @OA\Property(property="thumbnail", type="string", format="binary", description="[Optional] thumbnail image file to upload", nullable=true)
+ *  )
+ */
+
 class RecordingController extends Controller
 {
 
     /**
      * @OA\Get(
-     *     path="/recordings",
-     *     summary="List recordings",
+     *     path="/api/v1/recordings",
+     *     summary="List all recordings",
+     *     description="Returns a list of all recordings.",
      *     tags={"Recordings"},
-     *     description="Get a paginated list of recordings ordered by creation date in descending order.",
-     *     operationId="listRecordings",
      *     @OA\Response(
      *         response=200,
-     *         description="Successful operation",
+     *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="id", type="string"),
-     *                     @OA\Property(property="title", type="string"),
-     *                     @OA\Property(property="url", type="string"),
-     *                     @OA\Property(property="description", type="string"),
-     *                     @OA\Property(property="fileName", type="string"),
-     *                     @OA\Property(property="fileSize", type="string"),
-     *                     @OA\Property(property="thumbnail", type="string"),
-     *                     @OA\Property(property="slug", type="string"),
-     *                     @OA\Property(property="createdAt", type="string"),
-     *                 ),
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string"),
-     *                 @OA\Property(property="next", type="string"),
-     *             ),
-     *             @OA\Property(
-     *                 property="meta",
-     *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="path", type="string"),
-     *                 @OA\Property(property="per_page", type="integer"),
-     *                 @OA\Property(property="to", type="integer"),
-     *                 @OA\Property(property="total", type="integer"),
-     *             ),
-     *         ),
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/RecordingResource"),
+     *             example={
+     *                 {
+     *                     "id": "9a3e8d15-b805-4309-989b-bba4f78a9248",
+     *                     "title": "Kizz Daniel - Jaho (Official Video)",
+     *                     "url": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4",
+     *                     "description": null,
+     *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+     *                     "fileSize": "10690611",
+     *                     "thumbnail": null,
+     *                     "slug": "kizz-daniel-jaho-official-video",
+     *                     "createdAt": "2023-09-28T20:54:16.000000Z"
+     *                 },
+     *                 {
+     *                     "id": "9a3e72a0-70d6-4350-a6b3-4955dac13db2",
+     *                     "title": "New Recording",
+     *                     "url": "http://localhost:8000/storage/videos/1695930017_kizz_daniel_-_jaho_(official_video).mp4",
+     *                     "description": null,
+     *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+     *                     "fileSize": "10690611",
+     *                     "thumbnail": "http://localhost:8000/storage/thumbnails/1695930017_yos3.png",
+     *                     "slug": "new-recording",
+     *                     "createdAt": "2023-09-28T19:40:17.000000Z"
+     *                 },
+     *                 {
+     *                     "id": "9a3e6efe-9fd6-4570-9781-d99b1e8eb446",
+     *                     "title": "Kizz Daniel - Jaho (Official Video)",
+     *                     "url": "http://localhost:8000/storage/videos/1695929408_kizz_daniel_-_jaho_(official_video).mp4",
+     *                     "description": null,
+     *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+     *                     "fileSize": "10690611",
+     *                     "thumbnail": "http://localhost:8000/storage/thumbnails/1695929408_yos3.png",
+     *                     "slug": "kizz-daniel-jaho-official-video",
+     *                     "createdAt": "2023-09-28T19:30:08.000000Z"
+     *                 }
+     *             }
+     *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Oops, something went wrong",
+     *         description="Internal server error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="error", type="string"),
-     *             @OA\Property(property="statusCode", type="integer"),
-     *         ),
-     *     ),
+     *             @OA\Property(property="error", type="string", example="Oops something went wrong"),
+     *             @OA\Property(property="statusCode", type="integer", example=500)
+     *         )
+     *     )
      * )
      */
+
     public function index(): JsonResponse | ResourceCollection
     {
         try{
@@ -95,89 +119,43 @@ class RecordingController extends Controller
      * @OA\Post(
      *     path="/recordings",
      *     summary="Create a new recording",
+     *     description="Creates a new recording.",
      *     tags={"Recordings"},
-     *     description="Create a new recording and upload a video file. Returns a response with the newly created recording details on success.",
-     *     operationId="createRecording",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="file",
-     *                     description="The video file to upload",
-     *                     type="file",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="title",
-     *                     description="The title of the recording (optional)",
-     *                     type="string",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="description",
-     *                     description="A description of the recording (optional)",
-     *                     type="string",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="thumbnail",
-     *                     description="Thumbnail image for the recording (optional)",
-     *                     type="file",
-     *                 ),
-     *             ),
-     *         ),
+     *         @OA\JsonContent(ref="#/components/schemas/RecordingRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Recording created successfully",
      *         @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="data",
-     *                  type="object",
-     *                  @OA\Property(property="id", type="string"),
-     *                  @OA\Property(property="title", type="string"),
-     *                  @OA\Property(property="url", type="string"),
-     *                  @OA\Property(property="description", type="string"),
-     *                  @OA\Property(property="fileName", type="string"),
-     *                  @OA\Property(property="fileSize", type="string"),
-     *                  @OA\Property(property="thumbnail", type="string"),
-     *                  @OA\Property(property="slug", type="string"),
-     *                  @OA\Property(property="createdAt", type="string"),
-     *              ),
-     *          ),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Recording created successfully"),
+     *             @OA\Property(property="statusCode", type="integer", example=201),
+     *             @OA\Property(property="data", ref="#/components/schemas/RecordingResource")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error or file upload failure",
+     *         description="Validation error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
+     *             @OA\Property(property="error", type="string", example="Validation error message"),
+     *             @OA\Property(property="statusCode", type="integer", example=422)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Oops, something went wrong",
+     *         description="Internal server error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
-     *     ),
+     *             @OA\Property(property="error", type="string", example="Oops something went wrong"),
+     *             @OA\Property(property="statusCode", type="integer", example=500)
+     *         )
+     *     )
      * )
      */
+
     public function store(StoreRecordingRequest $request)
     {
         try {
@@ -219,71 +197,42 @@ class RecordingController extends Controller
     /**
      * @OA\Get(
      *     path="/recordings/{recording}",
-     *     summary="Get recording details",
+     *     summary="Get a recording by ID",
+     *     description="Returns details of a recording by its ID.",
      *     tags={"Recordings"},
-     *     description="Retrieve details for a specific recording by its identifier.",
-     *     operationId="getRecordingDetails",
      *     @OA\Parameter(
      *         name="recording",
      *         in="path",
-     *         description="ID or unique identifier of the recording",
      *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *         ),
+     *         description="Recording ID",
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Recording details retrieved successfully",
-     *         @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="data",
-     *                  type="object",
-     *                  @OA\Property(property="id", type="string"),
-     *                  @OA\Property(property="title", type="string"),
-     *                  @OA\Property(property="url", type="string"),
-     *                  @OA\Property(property="description", type="string"),
-     *                  @OA\Property(property="fileName", type="string"),
-     *                  @OA\Property(property="fileSize", type="string"),
-     *                  @OA\Property(property="thumbnail", type="string"),
-     *                  @OA\Property(property="slug", type="string"),
-     *                  @OA\Property(property="createdAt", type="string"),
-     *              ),
-     *          ),
+     *         description="Successful response",
+     *         @OA\JsonContent(ref="#/components/schemas/RecordingResource")
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Recording not found",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
+     *             @OA\Property(property="error", type="string", example="Recording not found"),
+     *             @OA\Property(property="statusCode", type="integer", example=404)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Oops, something went wrong",
+     *         description="Internal server error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
-     *     ),
+     *             @OA\Property(property="error", type="string", example="Oops something went wrong"),
+     *             @OA\Property(property="statusCode", type="integer", example=500)
+     *         )
+     *     )
      * )
      */
+
     public function show(string $id)
     {
         try{
@@ -301,67 +250,47 @@ class RecordingController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/recordings/{recording}",
-     *     summary="Delete a recording",
+     *     path="/api/v1/recordings/{id}",
+     *     summary="Delete a recording by ID",
+     *     description="Deletes a recording by its ID.",
      *     tags={"Recordings"},
-     *     description="Delete a specific recording by its identifier. Also, delete the associated file from storage.",
-     *     operationId="deleteRecording",
      *     @OA\Parameter(
      *         name="recording",
      *         in="path",
-     *         description="ID or unique identifier of the recording to delete",
      *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *         ),
+     *         description="Recording ID",
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Recording deleted successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
+     *             @OA\Property(property="message", type="string", example="Recording deleted successfully"),
+     *             @OA\Property(property="statusCode", type="integer", example=200)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Recording not found",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
+     *             @OA\Property(property="error", type="string", example="Recording not found"),
+     *             @OA\Property(property="statusCode", type="integer", example=404)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Oops, something went wrong",
+     *         description="Internal server error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="statusCode",
-     *                 type="integer",
-     *             ),
-     *         ),
-     *     ),
+     *             @OA\Property(property="error", type="string", example="Oops something went wrong"),
+     *             @OA\Property(property="statusCode", type="integer", example=500)
+     *         )
+     *     )
      * )
      */
+
     public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $recording = Recording::find($id);

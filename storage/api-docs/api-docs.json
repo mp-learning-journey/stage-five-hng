@@ -11,116 +11,76 @@
         }
     ],
     "paths": {
-        "/recordings": {
+        "/api/v1/recordings": {
             "get": {
                 "tags": [
                     "Recordings"
                 ],
-                "summary": "List recordings",
-                "description": "Get a paginated list of recordings ordered by creation date in descending order.",
-                "operationId": "listRecordings",
+                "summary": "List all recordings",
+                "description": "Returns a list of all recordings.",
+                "operationId": "e96554e8c32de40677656ddaf5b75c96",
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Successful response",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string"
-                                                    },
-                                                    "title": {
-                                                        "type": "string"
-                                                    },
-                                                    "url": {
-                                                        "type": "string"
-                                                    },
-                                                    "description": {
-                                                        "type": "string"
-                                                    },
-                                                    "fileName": {
-                                                        "type": "string"
-                                                    },
-                                                    "fileSize": {
-                                                        "type": "string"
-                                                    },
-                                                    "thumbnail": {
-                                                        "type": "string"
-                                                    },
-                                                    "slug": {
-                                                        "type": "string"
-                                                    },
-                                                    "createdAt": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
-                                                },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string"
-                                                },
-                                                "next": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "from": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "path": {
-                                                    "type": "string"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
-                                                "to": {
-                                                    "type": "integer"
-                                                },
-                                                "total": {
-                                                    "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecordingResource"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "id": "9a3e8d15-b805-4309-989b-bba4f78a9248",
+                                        "title": "Kizz Daniel - Jaho (Official Video)",
+                                        "url": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4",
+                                        "description": null,
+                                        "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+                                        "fileSize": "10690611",
+                                        "thumbnail": null,
+                                        "slug": "kizz-daniel-jaho-official-video",
+                                        "createdAt": "2023-09-28T20:54:16.000000Z"
                                     },
-                                    "type": "object"
-                                }
+                                    {
+                                        "id": "9a3e72a0-70d6-4350-a6b3-4955dac13db2",
+                                        "title": "New Recording",
+                                        "url": "http://localhost:8000/storage/videos/1695930017_kizz_daniel_-_jaho_(official_video).mp4",
+                                        "description": null,
+                                        "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+                                        "fileSize": "10690611",
+                                        "thumbnail": "http://localhost:8000/storage/thumbnails/1695930017_yos3.png",
+                                        "slug": "new-recording",
+                                        "createdAt": "2023-09-28T19:40:17.000000Z"
+                                    },
+                                    {
+                                        "id": "9a3e6efe-9fd6-4570-9781-d99b1e8eb446",
+                                        "title": "Kizz Daniel - Jaho (Official Video)",
+                                        "url": "http://localhost:8000/storage/videos/1695929408_kizz_daniel_-_jaho_(official_video).mp4",
+                                        "description": null,
+                                        "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
+                                        "fileSize": "10690611",
+                                        "thumbnail": "http://localhost:8000/storage/thumbnails/1695929408_yos3.png",
+                                        "slug": "kizz-daniel-jaho-official-video",
+                                        "createdAt": "2023-09-28T19:30:08.000000Z"
+                                    }
+                                ]
                             }
                         }
                     },
                     "500": {
-                        "description": "Oops, something went wrong",
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Oops something went wrong"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -129,38 +89,22 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/recordings": {
             "post": {
                 "tags": [
                     "Recordings"
                 ],
                 "summary": "Create a new recording",
-                "description": "Create a new recording and upload a video file. Returns a response with the newly created recording details on success.",
-                "operationId": "createRecording",
+                "description": "Creates a new recording.",
+                "operationId": "f8e75c34d07362a67c93ca92ba78b70b",
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
-                                "properties": {
-                                    "file": {
-                                        "description": "The video file to upload",
-                                        "type": "file"
-                                    },
-                                    "title": {
-                                        "description": "The title of the recording (optional)",
-                                        "type": "string"
-                                    },
-                                    "description": {
-                                        "description": "A description of the recording (optional)",
-                                        "type": "string"
-                                    },
-                                    "thumbnail": {
-                                        "description": "Thumbnail image for the recording (optional)",
-                                        "type": "file"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/RecordingRequest"
                             }
                         }
                     }
@@ -172,37 +116,16 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Recording created successfully"
+                                        },
+                                        "statusCode": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
                                         "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                                },
-                                                "url": {
-                                                    "type": "string"
-                                                },
-                                                "description": {
-                                                    "type": "string"
-                                                },
-                                                "fileName": {
-                                                    "type": "string"
-                                                },
-                                                "fileSize": {
-                                                    "type": "string"
-                                                },
-                                                "thumbnail": {
-                                                    "type": "string"
-                                                },
-                                                "slug": {
-                                                    "type": "string"
-                                                },
-                                                "createdAt": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/RecordingResource"
                                         }
                                     },
                                     "type": "object"
@@ -211,16 +134,18 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error or file upload failure",
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Validation error message"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 422
                                         }
                                     },
                                     "type": "object"
@@ -229,16 +154,18 @@
                         }
                     },
                     "500": {
-                        "description": "Oops, something went wrong",
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Oops something went wrong"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -254,61 +181,28 @@
                 "tags": [
                     "Recordings"
                 ],
-                "summary": "Get recording details",
-                "description": "Retrieve details for a specific recording by its identifier.",
-                "operationId": "getRecordingDetails",
+                "summary": "Get a recording by ID",
+                "description": "Returns details of a recording by its ID.",
+                "operationId": "895af8c76d5ac9ef76c2ae883c961ecc",
                 "parameters": [
                     {
                         "name": "recording",
                         "in": "path",
-                        "description": "ID or unique identifier of the recording",
+                        "description": "Recording ID",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Recording details retrieved successfully",
+                        "description": "Successful response",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                                },
-                                                "url": {
-                                                    "type": "string"
-                                                },
-                                                "description": {
-                                                    "type": "string"
-                                                },
-                                                "fileName": {
-                                                    "type": "string"
-                                                },
-                                                "fileSize": {
-                                                    "type": "string"
-                                                },
-                                                "thumbnail": {
-                                                    "type": "string"
-                                                },
-                                                "slug": {
-                                                    "type": "string"
-                                                },
-                                                "createdAt": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/RecordingResource"
                                 }
                             }
                         }
@@ -320,10 +214,12 @@
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Recording not found"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 404
                                         }
                                     },
                                     "type": "object"
@@ -332,16 +228,18 @@
                         }
                     },
                     "500": {
-                        "description": "Oops, something went wrong",
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Oops something went wrong"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -350,22 +248,25 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/recordings/{id}": {
             "delete": {
                 "tags": [
                     "Recordings"
                 ],
-                "summary": "Delete a recording",
-                "description": "Delete a specific recording by its identifier. Also, delete the associated file from storage.",
-                "operationId": "deleteRecording",
+                "summary": "Delete a recording by ID",
+                "description": "Deletes a recording by its ID.",
+                "operationId": "92f390d7d84012b66f8c062410529ca9",
                 "parameters": [
                     {
                         "name": "recording",
                         "in": "path",
-                        "description": "ID or unique identifier of the recording to delete",
+                        "description": "Recording ID",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
@@ -377,10 +278,12 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Recording deleted successfully"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 200
                                         }
                                     },
                                     "type": "object"
@@ -395,10 +298,12 @@
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Recording not found"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 404
                                         }
                                     },
                                     "type": "object"
@@ -407,16 +312,18 @@
                         }
                     },
                     "500": {
-                        "description": "Oops, something went wrong",
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Oops something went wrong"
                                         },
                                         "statusCode": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -425,6 +332,85 @@
                         }
                     }
                 }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RecordingResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "9a3e8d15-b805-4309-989b-bba4f78a9248"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Kizz Daniel - Jaho (Official Video)"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "fileName": {
+                        "type": "string",
+                        "example": "Kizz Daniel - Jaho (Official Video).mp4"
+                    },
+                    "fileSize": {
+                        "type": "string",
+                        "example": "10690611"
+                    },
+                    "thumbnail": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "kizz-daniel-jaho-official-video"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-09-28T20:54:16.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "RecordingRequest": {
+                "description": "Recording request data",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Sample Title",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Description of the recording",
+                        "nullable": true
+                    },
+                    "file": {
+                        "description": "The video file to upload",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": false
+                    },
+                    "thumbnail": {
+                        "description": "[Optional] thumbnail image file to upload",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         }
     }
