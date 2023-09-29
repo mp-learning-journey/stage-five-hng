@@ -28,4 +28,16 @@ class StoreRecordingRequest extends FormRequest
             'thumbnail' => ['image','mimes:png,jpg,jpeg', 'max:2048', 'nullable'],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'file.max' => 'File size must not be greater than 20MB',
+        ];
+    }
 }
