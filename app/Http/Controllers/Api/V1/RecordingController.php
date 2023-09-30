@@ -8,6 +8,7 @@ use App\Http\Requests\V1\StoreRecordingRequest;
 use App\Http\Resources\V1\RecordingResource;
 use App\Models\Recording;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -156,10 +157,11 @@ class RecordingController extends Controller
      * )
      */
 
-    public function store(StoreRecordingRequest $request)
+    public function store(Request $request)
     {
+        $file = $request->file('file');
         try {
-            $upload = FileHelper::upload($request->file, 'videos'); // returns uploaded file name
+            $upload = FileHelper::upload($file, 'videos'); // returns uploaded file name
             if (!$upload) {
                 return response()->json(['error' => 'Oops! Could not upload file', 'statusCode' => 422], 422);
             }
