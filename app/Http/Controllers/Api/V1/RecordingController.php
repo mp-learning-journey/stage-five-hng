@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreRecordingRequest;
 use App\Http\Resources\V1\RecordingResource;
 use App\Models\Recording;
+use FFMpeg\FFMpeg;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -157,13 +158,19 @@ class RecordingController extends Controller
      * )
      */
 
-    public function store(Request $request)
+    public function store($id, Request $request)
     {
-        $file = $request->file('file');
         try {
-            $upload = FileHelper::upload($file, 'videos'); // returns uploaded file name
+            $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
             if (!$upload) {
                 return response()->json(['error' => 'Oops! Could not upload file', 'statusCode' => 422], 422);
+            }
+
+            if(!$upload->completed){
+                return response()->json([
+                    'message' => 'uploading chunck...',
+                    'statusCode' => 200,
+                ], 200);
             }
 
             return DB::transaction(function () use ($upload, $request) {
@@ -194,6 +201,31 @@ class RecordingController extends Controller
             Log::error($e);
             return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
         }
+    }
+
+    public function test() {
+
+        $fileName = "videos/video1.webm";
+        $tempFile = "videos/gdu3huj.webm";
+        $outputPath = storage_path('app/public/' . $fileName);
+        $video2 = storage_path('app/public/'. $tempFile);
+        $outputPath2 = storage_path('app/public/videos/video5.webm');
+
+        // Initialize FFmpeg
+        $ffmpeg = FFMpeg::create();
+//        $format = new FFMpeg\Format\Video\X264();
+//        $format->setAudioCodec("libmp3lame");
+
+        // Open the first video file
+        $existingVideo = $ffmpeg->open($outputPath);
+
+        if (file_exists($outputPath2)) {
+            unlink($outputPath2);
+        }
+        // Concatenate the videos
+        $existingVideo->concat([$outputPath, $video2])->saveFromSameCodecs($outputPath2);
+
+        return true;
     }
 
     /**
