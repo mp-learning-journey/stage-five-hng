@@ -47,11 +47,14 @@ class FileHelper
                 $existingVideo = $ffmpeg->open($outputPath);
 
                 // Concatenate the videos
-                if($existingVideo->concat([$outputPath, $tempPath])->saveFromSameCodecs($savePath))
-                    echo "added";
+                if($existingVideo->concat([$outputPath, $tempPath])->saveFromSameCodecs($savePath)){
+                    // Delete the new chunk file
+                    unlink($tempPath);
 
-                unlink($outputPath);
-                rename($savePath, $outputPath);
+                    unlink($outputPath); // delete previous video
+                    rename($savePath, $outputPath); // rename new video as previous video
+                }
+
             } else {
                 // Store the video in the 'public' disk
                 Storage::disk('public')->put($fileName, file_get_contents($file));

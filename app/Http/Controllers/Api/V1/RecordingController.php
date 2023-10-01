@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -160,6 +161,11 @@ class RecordingController extends Controller
 
     public function store($id, Request $request)
     {
+        $request->validate([
+                'isLastChunk' => ['required', Rule::in(true, false)],
+                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
+        ]);
+
         try {
             $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
             if (!$upload) {
