@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Recording;
+use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -98,14 +99,53 @@ class FileHelper
         $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])
             ->attach('file', file_get_contents($file), 'video.mp4')->post($url, $data);
         if ($response->successful()) {
+            $segments = $response->json('segments');
+
+            // save full transcriptions
             $recording->description = $response->json('text');
             $recording->save();
+
+            self::transcribeInSegment($recording, $segments);
+
             return true;
         } else {
             $errorMessage = $response->json('message');
             Log::error("Transcription request failed. Error message: $errorMessage");
+            return false;
         }
     }
+
+    public static function transcribeInSegment($recording, $segments): void
+    {
+        $x = 1;
+        foreach ($segments as $segment) {
+            $recording->transcriptions()->create([
+                'position' => $x,
+                'start' => $segment['start'],
+                'end' => $segment['end'],
+                'description' => $segment['text']
+            ]);
+            $x++;
+        }
+    }
+
+    public static function generateThumbnail($videoPath, $name = '', $time = '00:00:05')
+    {
+        // Initialize FFmpeg
+        $ffmpeg = FFMpeg::create();
+
+        // Open the video file
+        $video = $ffmpeg->open($videoPath);
+
+        // Set the time (in HH:MM:SS format) for the thumbnail capture
+        $timecode = new TimeCode($time);
+        $name = 'thumbnails/'. $name;
+        $thumbnailPath = storage_path('app/public/');
+
+        // Generate the thumbnail
+        $video->frame($timecode)->save($thumbnailPath);
+    }
 }
+
 
 

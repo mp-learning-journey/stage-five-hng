@@ -18,7 +18,10 @@ class RecordingResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'url' => asset('storage/'. $this->file_location),
-            'transcription' => $this->description,
+            'transcription' => [
+                'full' => $this->description,
+                'segment' => TranscriptionResource::collection($this->transcriptions),
+            ],
             'fileName' => $this->file_name,
             'fileSize' => $this->file_size,
             'thumbnail' => $this->thumbnail ? asset('storage/'. $this->thumbnail) : null,
