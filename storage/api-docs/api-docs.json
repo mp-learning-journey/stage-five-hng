@@ -35,7 +35,10 @@
                                         "id": "9a3e8d15-b805-4309-989b-bba4f78a9248",
                                         "title": "Kizz Daniel - Jaho (Official Video)",
                                         "url": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4",
-                                        "description": null,
+                                        "transcription": {
+                                            "full": "Transcription Text",
+                                            "segment": []
+                                        },
                                         "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
                                         "fileSize": "10690611",
                                         "thumbnail": null,
@@ -46,7 +49,25 @@
                                         "id": "9a3e72a0-70d6-4350-a6b3-4955dac13db2",
                                         "title": "New Recording",
                                         "url": "http://localhost:8000/storage/videos/1695930017_kizz_daniel_-_jaho_(official_video).mp4",
-                                        "description": null,
+                                        "transcription": {
+                                            "full": "Transcription Text",
+                                            "segment": [
+                                                {
+                                                    "id": 1,
+                                                    "position": 1,
+                                                    "start": "00:00:00",
+                                                    "endTime": "00:00:10",
+                                                    "transcription": "Segment 1"
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "position": 2,
+                                                    "start": "00:10",
+                                                    "endTime": "00:20",
+                                                    "transcription": "Segment 2"
+                                                }
+                                            ]
+                                        },
                                         "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
                                         "fileSize": "10690611",
                                         "thumbnail": "http://localhost:8000/storage/thumbnails/1695930017_yos3.png",
@@ -57,7 +78,18 @@
                                         "id": "9a3e6efe-9fd6-4570-9781-d99b1e8eb446",
                                         "title": "Kizz Daniel - Jaho (Official Video)",
                                         "url": "http://localhost:8000/storage/videos/1695929408_kizz_daniel_-_jaho_(official_video).mp4",
-                                        "description": null,
+                                        "transcription": {
+                                            "full": "Transcription Text",
+                                            "segment": [
+                                                {
+                                                    "id": 3,
+                                                    "position": 3,
+                                                    "start": "00:00",
+                                                    "endTime": "00:15",
+                                                    "transcription": "Segment 3"
+                                                }
+                                            ]
+                                        },
                                         "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
                                         "fileSize": "10690611",
                                         "thumbnail": "http://localhost:8000/storage/thumbnails/1695929408_yos3.png",
@@ -361,8 +393,26 @@
                         "example": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"
                     },
                     "transcription": {
-                        "type": "string",
-                        "example": null,
+                        "type": "object",
+                        "example": {
+                            "full": "Transcription Text",
+                            "segment": [
+                                {
+                                    "id": 1,
+                                    "position": 1,
+                                    "start": "00:00:00",
+                                    "endTime": "00:00:10",
+                                    "transcription": "Segment 1"
+                                },
+                                {
+                                    "id": 2,
+                                    "position": 2,
+                                    "start": "00:00:10",
+                                    "endTime": "00:00:20",
+                                    "transcription": "Segment 2"
+                                }
+                            ]
+                        },
                         "nullable": true
                     },
                     "fileName": {
