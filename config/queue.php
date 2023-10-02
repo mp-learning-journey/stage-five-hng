@@ -78,8 +78,12 @@ return [
             'vhost' => env('RABBITMQ_VHOST', '/'),
             'login' => env('RABBITMQ_LOGIN', 'guest'),
             'password' => env('RABBITMQ_PASSWORD', 'guest'),
+            'queue' => env('RABBITMQ_QUEUE', 'default'),
+            'exchange_declare' => true,
+            'queue_declare' => true,
+            'queue_bind' => true,
+            'exchange' => 'amq.topic',
         ],
-
 
     ],
 

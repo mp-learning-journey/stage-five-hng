@@ -86,21 +86,17 @@ class FileHelper
         $file = asset('storage/'. $recording->file_location);
         // Prepare the data for the transcription request
         $data = [
-            "url" => "https://hngs5.mrprotocoll.me/storage/videos/1696225131_motivation_quickie_-_this_speech_will_pump_you_up_in_30_seconds.mp4",
             "fileType" => "mp4",
             "diarization" => "false",
-            "file" => $file,
             "language" => "en",
-            "task" => "transcribe"
+            "task" => "transcribe",
         ];
 
-        // Send the transcription request using Laravel's HTTP client
-        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])->post($url, $data);
+        // Send the transcription request using Laravel HTTP client
+        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])
+            ->attach('file', file_get_contents($file), 'video.mp4')->post($url, $data);
         if ($response->successful()) {
-//            echo $response->json('text');
             $recording->description = $response->json('text');
-//            $recording->description = "something";
-
             $recording->save();
             return true;
         } else {

@@ -25,7 +25,7 @@ use Illuminate\Validation\ValidationException;
  *     @OA\Property(property="id", type="string", format="uuid", example="9a3e8d15-b805-4309-989b-bba4f78a9248"),
  *     @OA\Property(property="title", type="string", example="Kizz Daniel - Jaho (Official Video)"),
  *     @OA\Property(property="url", type="string", format="uri", example="http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"),
- *     @OA\Property(property="description", type="string", nullable=true, example=null),
+ *     @OA\Property(property="transcription", type="string", nullable=true, example=null),
  *     @OA\Property(property="fileName", type="string", example="Kizz Daniel - Jaho (Official Video).mp4"),
  *     @OA\Property(property="fileSize", type="string", example="10690611"),
  *     @OA\Property(property="thumbnail", type="string", format="uri", nullable=true, example=null),
@@ -121,53 +121,71 @@ class RecordingController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/recordings",
-     *     summary="Create a new recording",
-     *     description="Creates a new recording.",
+     *     path="/api/v1/recordings/{id}/chunk",
+     *     summary="Upload a video recording chunk",
      *     tags={"Recordings"},
+     *     operationId="uploadRecordingChunk",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Unique identifier for the recording",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/RecordingRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Recording created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Recording created successfully"),
-     *             @OA\Property(property="statusCode", type="integer", example=201),
-     *             @OA\Property(property="data", ref="#/components/schemas/RecordingResource")
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="isLastChunk",
+     *                     type="boolean",
+     *                     description="Set to true if this is the last chunk of the video"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="file",
+     *                     format="binary",
+     *                     description="The video chunk file to upload (supported formats: mp4, avi, wmv, webm)"
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
+     *         response="200",
+     *         description="Video chunk uploaded successfully"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Video recording uploaded successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/RecordingResource")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error or failed to upload file",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", example="Validation error message"),
-     *             @OA\Property(property="statusCode", type="integer", example=422)
+     *             @OA\Property(property="error", type="string"),
+     *             @OA\Property(property="statusCode", type="integer")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=500,
+     *         response="500",
      *         description="Internal server error",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", example="Oops something went wrong"),
-     *             @OA\Property(property="statusCode", type="integer", example=500)
+     *             @OA\Property(property="error", type="string"),
+     *             @OA\Property(property="statusCode", type="integer")
      *         )
      *     )
      * )
      */
-
     public function store($id, Request $request)
     {
-//        $request->validate([
-//                'isLastChunk' => ['required', Rule::in('true', 'false')],
-//                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
-//        ]);
+        $request->validate([
+                'isLastChunk' => ['required', Rule::in('true', 'false')],
+                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
+        ]);
 
-//        try {
+        try {
             $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
             if (!$upload) {
                 return response()->json(['error' => 'Oops! Could not upload file', 'statusCode' => 422], 422);
@@ -181,7 +199,6 @@ class RecordingController extends Controller
             }
 
             return DB::transaction(function () use ($upload, $request) {
-                $file = $request->file('file');
                 // save in db
                 $recording = new Recording();
 
@@ -206,14 +223,14 @@ class RecordingController extends Controller
                     'data' => new RecordingResource($recording)
                 ], 201);
             });
-//        }
-//        catch(ValidationException $exception) {
-//            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
-//        }
-//        catch (\Exception $e) {
-//            Log::error($e);
-//            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
-//        }
+        }
+        catch(ValidationException $exception) {
+            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
+        }
+        catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
+        }
     }
 
     public function test() {
@@ -226,8 +243,6 @@ class RecordingController extends Controller
 
         // Initialize FFmpeg
         $ffmpeg = FFMpeg::create();
-//        $format = new FFMpeg\Format\Video\X264();
-//        $format->setAudioCodec("libmp3lame");
 
         // Open the first video file
         $existingVideo = $ffmpeg->open($outputPath);
