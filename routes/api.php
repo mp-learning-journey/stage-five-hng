@@ -19,7 +19,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('recordings/{id}/chunk', [RecordingController::class, 'store']);
-Route::get('recordings', [RecordingController::class, 'index']);
-Route::get('recordings/{id}', [RecordingController::class, 'show']);
-Route::delete('recordings/{id}', [RecordingController::class, 'destroy']);
+Route::middleware(['api'])->group(function () {
+    Route::post('recordings/{id}/chunk', [RecordingController::class, 'store']);
+    Route::get('recordings', [RecordingController::class, 'index']);
+    Route::get('recordings/{id}', [RecordingController::class, 'show']);
+    Route::delete('recordings/{id}', [RecordingController::class, 'destroy']);
+});
+
