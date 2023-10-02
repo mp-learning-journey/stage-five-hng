@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('recording_id')->constrained()->cascadeOnDelete();
             $table->integer('position');
-            $table->string('start');
-            $table->string('end');
+            $table->decimal('start');
+            $table->decimal('end');
             $table->text('description');
             $table->timestamps();
         });

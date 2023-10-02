@@ -98,14 +98,36 @@ class FileHelper
         $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])
             ->attach('file', file_get_contents($file), 'video.mp4')->post($url, $data);
         if ($response->successful()) {
+            $segments = $response->json('segments');
+
+            // save full transcriptions
             $recording->description = $response->json('text');
             $recording->save();
+
+            self::transcribeInSegment($recording, $segments);
+
             return true;
         } else {
             $errorMessage = $response->json('message');
             Log::error("Transcription request failed. Error message: $errorMessage");
+            return false;
+        }
+    }
+
+    public static function transcribeInSegment($recording, $segments): void
+    {
+        $x = 1;
+        foreach ($segments as $segment) {
+            $recording->transcriptions()->create([
+                'position' => $x,
+                'start' => $segment['start'],
+                'end' => $segment['end'],
+                'description' => $segment['text']
+            ]);
+            $x++;
         }
     }
 }
+
 
 
