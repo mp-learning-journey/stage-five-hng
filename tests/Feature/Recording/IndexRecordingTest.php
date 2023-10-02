@@ -26,7 +26,7 @@ class IndexRecordingTest extends TestCase
                         'id',
                         'title',
                         'url',
-                        'description',
+                        'transcription',
                         'fileName',
                         'fileSize',
                         'thumbnail',

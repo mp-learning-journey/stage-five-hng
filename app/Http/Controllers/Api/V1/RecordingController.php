@@ -180,10 +180,10 @@ class RecordingController extends Controller
      */
     public function store($id, Request $request)
     {
-        $request->validate([
-                'isLastChunk' => ['required', Rule::in('true', 'false')],
-                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
-        ]);
+//        $request->validate([
+//                'isLastChunk' => ['required', Rule::in('true', 'false')],
+//                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
+//        ]);
 
         try {
             $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
