@@ -11,6 +11,13 @@ class Transcription extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $fillable = [
+        'position',
+        'start',
+        'end',
+        'description',
+    ];
+
     public function recording(): BelongsTo{
         return $this->belongsTo(Recording::class);
     }

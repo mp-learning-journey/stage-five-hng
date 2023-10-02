@@ -207,8 +207,10 @@ class RecordingController extends Controller
                 $recording->file_size = $upload->fileSize;
                 $recording->file_name = $upload->fileName;
                 $recording->slug = $recording->title ? Str::slug($recording->title) : Str::slug($recording->file_name);
-                $thumbnail = $request->hasFile('thumbnail') ? FileHelper::upload($request->thumbnail, 'thumbnails') : null;
-                $recording->thumbnail = $thumbnail ? $thumbnail->file : null;
+
+//                $thumbnail = FileHelper::generateThumbnail(storage_path('app/public/'. $upload->fileName));
+//
+//                $recording->thumbnail = $thumbnail ? $thumbnail->file : null;
                 $recording->save();
 
                 if(TranscribeVideo::dispatch($recording)->onConnection('rabbitmq')){

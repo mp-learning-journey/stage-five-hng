@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Recording;
+use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -126,6 +127,23 @@ class FileHelper
             ]);
             $x++;
         }
+    }
+
+    public static function generateThumbnail($videoPath, $name = '', $time = '00:00:05')
+    {
+        // Initialize FFmpeg
+        $ffmpeg = FFMpeg::create();
+
+        // Open the video file
+        $video = $ffmpeg->open($videoPath);
+
+        // Set the time (in HH:MM:SS format) for the thumbnail capture
+        $timecode = new TimeCode($time);
+        $name = 'thumbnails/'. $name;
+        $thumbnailPath = storage_path('app/public/');
+
+        // Generate the thumbnail
+        $video->frame($timecode)->save($thumbnailPath);
     }
 }
 

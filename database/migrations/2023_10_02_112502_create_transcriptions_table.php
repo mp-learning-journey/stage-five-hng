@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recording_transcription', function (Blueprint $table) {
+        Schema::create('transcriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('recording_id')->constrained()->cascadeOnDelete();
             $table->integer('position');
