@@ -2,8 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Models\Recording;
 use FFMpeg\FFMpeg;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,7 +33,7 @@ class FileHelper
 
             $fileName = $folderName . "/" . $name;
             $outputPath = storage_path('app/public/' . $fileName);
-            $savePath = storage_path('app/public/videos/saved.webm');
+            $savePath = storage_path('app/public/videos/saved.mp4');
 
 //            if the file exists, create a new file
 
@@ -77,6 +79,32 @@ class FileHelper
         }
     }
 
+    public static function transcribeVideo(Recording $recording, $file)
+    {
+        $url = "https://transcribe.whisperapi.com";
+        $api_key = env('WHISPER_API_KEY');
+
+        // Prepare the data for the transcription request
+        $data = [
+            "fileType" => "mp4",
+            "diarization" => "false",
+            "file" => $file,
+            "language" => "en",
+            "task" => "transcribe"
+        ];
+
+        // Send the transcription request using Laravel's HTTP client
+        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])->post($url, $data);
+        if ($response->successful()) {
+            echo $response->json('text');
+            $recording->description = $response->json('text');
+            $recording->save();
+            return true;
+        } else {
+            $errorMessage = $response->json('message');
+            Log::error("Transcription request failed. Error message: $errorMessage");
+        }
+    }
 }
 
 

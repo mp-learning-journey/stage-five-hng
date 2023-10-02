@@ -161,12 +161,12 @@ class RecordingController extends Controller
 
     public function store($id, Request $request)
     {
-        $request->validate([
-                'isLastChunk' => ['required', Rule::in(true, false)],
-                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
-        ]);
+//        $request->validate([
+//                'isLastChunk' => ['required', Rule::in('true', 'false')],
+//                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
+//        ]);
 
-        try {
+//        try {
             $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
             if (!$upload) {
                 return response()->json(['error' => 'Oops! Could not upload file', 'statusCode' => 422], 422);
@@ -188,10 +188,15 @@ class RecordingController extends Controller
                 $recording->file_size = $upload->fileSize;
                 $recording->file_name = $upload->fileName;
                 $recording->slug = $recording->title ? Str::slug($recording->title) : Str::slug($recording->file_name);
-                $recording->description = $request->description;
                 $thumbnail = $request->hasFile('thumbnail') ? FileHelper::upload($request->thumbnail, 'thumbnails') : null;
                 $recording->thumbnail = $thumbnail ? $thumbnail->file : null;
                 $recording->save();
+
+                if( FileHelper::transcribeVideo($recording, $request->file('file'))){
+                    echo "transcribed";
+                }else{
+                    echo "Not Transcribed";
+                }
 
                 return response()->json([
                     'message' => 'video recording uploaded successfully',
@@ -199,14 +204,14 @@ class RecordingController extends Controller
                     'data' => new RecordingResource($recording)
                 ], 201);
             });
-        }
-        catch(ValidationException $exception) {
-            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
-        }
-        catch (\Exception $e) {
-            Log::error($e);
-            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
-        }
+//        }
+//        catch(ValidationException $exception) {
+//            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
+//        }
+//        catch (\Exception $e) {
+//            Log::error($e);
+//            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
+//        }
     }
 
     public function test() {
