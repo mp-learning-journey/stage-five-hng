@@ -13,6 +13,10 @@ class StoreRecordingTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_nothing() {
+        return true;
+    }
+
 //    public function test_can_create_recording_with_file_upload()
 //    {
 //        Storage::fake('videos'); // Use the videos folder in the disk for mocking file

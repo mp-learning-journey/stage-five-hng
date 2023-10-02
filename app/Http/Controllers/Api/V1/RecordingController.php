@@ -185,7 +185,7 @@ class RecordingController extends Controller
 //                'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
 //        ]);
 
-        try {
+//        try {
             $upload = FileHelper::upload($request, 'videos', $id); // returns uploaded file name
             if (!$upload) {
                 return response()->json(['error' => 'Oops! Could not upload file', 'statusCode' => 422], 422);
@@ -223,14 +223,14 @@ class RecordingController extends Controller
                     'data' => new RecordingResource($recording)
                 ], 201);
             });
-        }
-        catch(ValidationException $exception) {
-            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
-        }
-        catch (\Exception $e) {
-            Log::error($e);
-            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
-        }
+//        }
+//        catch(ValidationException $exception) {
+//            return response()->json(['error' => $exception->validator->errors()->all(), 'statusCode' => 422], 422);
+//        }
+//        catch (\Exception $e) {
+//            Log::error($e);
+//            return response()->json(['error' => 'Oops something went wrong', 'statusCode' => 500], 500);
+//        }
     }
 
     public function test() {
