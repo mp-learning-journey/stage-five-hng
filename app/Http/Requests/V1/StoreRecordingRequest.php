@@ -3,6 +3,7 @@
 namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRecordingRequest extends FormRequest
 {
@@ -22,10 +23,8 @@ class StoreRecordingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'file' => ['file','mimes:mp4,avi,wmv', 'max:20480', 'required'],
-            'thumbnail' => ['image','mimes:png,jpg,jpeg', 'max:2048', 'nullable'],
+            'isLastChunk' => ['required', Rule::in(true, false)],
+            'file' => ['file','mimes:mp4,avi,wmv,webm', 'max:50480', 'required'],
         ];
     }
 

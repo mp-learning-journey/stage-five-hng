@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "https://hngs5.mrprotocoll.me",
             "description": "Base URL"
         }
     ],
@@ -91,61 +91,70 @@
                 }
             }
         },
-        "/recordings": {
+        "/api/v1/recordings/{id}/chunk": {
             "post": {
                 "tags": [
                     "Recordings"
                 ],
-                "summary": "Create a new recording",
-                "description": "Creates a new recording.",
-                "operationId": "f8e75c34d07362a67c93ca92ba78b70b",
+                "summary": "Upload a video recording chunk",
+                "operationId": "uploadRecordingChunk",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique identifier for the recording",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/RecordingRequest"
+                                "properties": {
+                                    "isLastChunk": {
+                                        "description": "Set to true if this is the last chunk of the video",
+                                        "type": "boolean"
+                                    },
+                                    "file": {
+                                        "description": "The video chunk file to upload (supported formats: mp4, avi, wmv, webm)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
+                    "200": {
+                        "description": "Video chunk uploaded successfully"
+                    },
                     "201": {
-                        "description": "Recording created successfully",
+                        "description": "Video recording uploaded successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Recording created successfully"
-                                        },
-                                        "statusCode": {
-                                            "type": "integer",
-                                            "example": 201
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/RecordingResource"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/RecordingResource"
                                 }
                             }
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error or failed to upload file",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string",
-                                            "example": "Validation error message"
+                                            "type": "string"
                                         },
                                         "statusCode": {
-                                            "type": "integer",
-                                            "example": 422
+                                            "type": "integer"
                                         }
                                     },
                                     "type": "object"
@@ -160,12 +169,10 @@
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "type": "string",
-                                            "example": "Oops something went wrong"
+                                            "type": "string"
                                         },
                                         "statusCode": {
-                                            "type": "integer",
-                                            "example": 500
+                                            "type": "integer"
                                         }
                                     },
                                     "type": "object"
@@ -353,7 +360,7 @@
                         "format": "uri",
                         "example": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"
                     },
-                    "description": {
+                    "transcription": {
                         "type": "string",
                         "example": null,
                         "nullable": true
