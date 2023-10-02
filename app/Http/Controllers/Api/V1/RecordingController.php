@@ -21,17 +21,32 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * @OA\Schema(
- *     schema="RecordingResource",
- *     @OA\Property(property="id", type="string", format="uuid", example="9a3e8d15-b805-4309-989b-bba4f78a9248"),
- *     @OA\Property(property="title", type="string", example="Kizz Daniel - Jaho (Official Video)"),
- *     @OA\Property(property="url", type="string", format="uri", example="http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"),
- *     @OA\Property(property="transcription", type="string", nullable=true, example=null),
- *     @OA\Property(property="fileName", type="string", example="Kizz Daniel - Jaho (Official Video).mp4"),
- *     @OA\Property(property="fileSize", type="string", example="10690611"),
- *     @OA\Property(property="thumbnail", type="string", format="uri", nullable=true, example=null),
- *     @OA\Property(property="slug", type="string", example="kizz-daniel-jaho-official-video"),
- *     @OA\Property(property="createdAt", type="string", format="date-time", example="2023-09-28T20:54:16.000000Z")
- * ),
+ *      schema="RecordingResource",
+ *      @OA\Property(property="id", type="string", format="uuid", example="9a3e8d15-b805-4309-989b-bba4f78a9248"),
+ *      @OA\Property(property="title", type="string", example="Kizz Daniel - Jaho (Official Video)"),
+ *      @OA\Property(property="url", type="string", format="uri", example="http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4"),
+ *      @OA\Property(property="transcription", type="object", nullable=true, example={"full": "Transcription Text", "segment": {
+ *          {
+ *              "id": 1,
+ *              "position": 1,
+ *              "start": "00:00:00",
+ *              "endTime": "00:00:10",
+ *              "transcription": "Segment 1"
+ *          },
+ *          {
+ *              "id": 2,
+ *              "position": 2,
+ *              "start": "00:00:10",
+ *              "endTime": "00:00:20",
+ *              "transcription": "Segment 2"
+ *          }
+ *      }}),
+ *      @OA\Property(property="fileName", type="string", example="Kizz Daniel - Jaho (Official Video).mp4"),
+ *      @OA\Property(property="fileSize", type="string", example="10690611"),
+ *      @OA\Property(property="thumbnail", type="string", format="uri", nullable=true, example=null),
+ *      @OA\Property(property="slug", type="string", example="kizz-daniel-jaho-official-video"),
+ *      @OA\Property(property="createdAt", type="string", format="date-time", example="2023-09-28T20:54:16.000000Z")
+ *  ),
  * @OA\Schema(
  *      schema="RecordingRequest",
  *      type="object",
@@ -63,7 +78,10 @@ class RecordingController extends Controller
      *                     "id": "9a3e8d15-b805-4309-989b-bba4f78a9248",
      *                     "title": "Kizz Daniel - Jaho (Official Video)",
      *                     "url": "http://localhost:8000/storage/videos/1695934456_kizz_daniel_-_jaho_(official_video).mp4",
-     *                     "description": null,
+     *                     "transcription": {
+     *                         "full": "Transcription Text",
+     *                         "segment": {}
+     *                     },
      *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
      *                     "fileSize": "10690611",
      *                     "thumbnail": null,
@@ -74,7 +92,25 @@ class RecordingController extends Controller
      *                     "id": "9a3e72a0-70d6-4350-a6b3-4955dac13db2",
      *                     "title": "New Recording",
      *                     "url": "http://localhost:8000/storage/videos/1695930017_kizz_daniel_-_jaho_(official_video).mp4",
-     *                     "description": null,
+     *                     "transcription": {
+     *                         "full": "Transcription Text",
+     *                         "segment": {
+     *                             {
+     *                                 "id": 1,
+     *                                 "position": 1,
+     *                                 "start": "00:00:00",
+     *                                 "endTime": "00:00:10",
+     *                                 "transcription": "Segment 1"
+     *                             },
+     *                             {
+     *                                 "id": 2,
+     *                                 "position": 2,
+     *                                 "start": "00:10",
+     *                                 "endTime": "00:20",
+     *                                 "transcription": "Segment 2"
+     *                             }
+     *                         }
+     *                     },
      *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
      *                     "fileSize": "10690611",
      *                     "thumbnail": "http://localhost:8000/storage/thumbnails/1695930017_yos3.png",
@@ -85,7 +121,18 @@ class RecordingController extends Controller
      *                     "id": "9a3e6efe-9fd6-4570-9781-d99b1e8eb446",
      *                     "title": "Kizz Daniel - Jaho (Official Video)",
      *                     "url": "http://localhost:8000/storage/videos/1695929408_kizz_daniel_-_jaho_(official_video).mp4",
-     *                     "description": null,
+     *                     "transcription": {
+     *                         "full": "Transcription Text",
+     *                         "segment": {
+     *                             {
+     *                                 "id": 3,
+     *                                 "position": 3,
+     *                                 "start": "00:00",
+     *                                 "endTime": "00:15",
+     *                                 "transcription": "Segment 3"
+     *                             }
+     *                         }
+     *                     },
      *                     "fileName": "Kizz Daniel - Jaho (Official Video).mp4",
      *                     "fileSize": "10690611",
      *                     "thumbnail": "http://localhost:8000/storage/thumbnails/1695929408_yos3.png",
