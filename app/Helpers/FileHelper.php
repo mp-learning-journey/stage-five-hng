@@ -84,9 +84,11 @@ class FileHelper
         $url = "https://transcribe.whisperapi.com";
         $api_key = env('WHISPER_API_KEY');
         $file = asset('storage/'. $recording->file_location);
+
+        $fileType = pathinfo($file, PATHINFO_EXTENSION);
         // Prepare the data for the transcription request
         $data = [
-            "fileType" => "mp4",
+            "fileType" => $fileType,
             "diarization" => "false",
             "language" => "en",
             "task" => "transcribe",
