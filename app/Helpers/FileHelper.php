@@ -79,13 +79,14 @@ class FileHelper
         }
     }
 
-    public static function transcribeVideo(Recording $recording, $file)
+    public static function transcribeVideo(Recording $recording)
     {
         $url = "https://transcribe.whisperapi.com";
         $api_key = env('WHISPER_API_KEY');
-
+        $file = asset('storage/'. $recording->file_location);
         // Prepare the data for the transcription request
         $data = [
+            "url" => "https://hngs5.mrprotocoll.me/storage/videos/1696225131_motivation_quickie_-_this_speech_will_pump_you_up_in_30_seconds.mp4",
             "fileType" => "mp4",
             "diarization" => "false",
             "file" => $file,
@@ -96,8 +97,10 @@ class FileHelper
         // Send the transcription request using Laravel's HTTP client
         $response = Http::withHeaders(['Authorization' => 'Bearer ' . $api_key])->post($url, $data);
         if ($response->successful()) {
-            echo $response->json('text');
+//            echo $response->json('text');
             $recording->description = $response->json('text');
+//            $recording->description = "something";
+
             $recording->save();
             return true;
         } else {

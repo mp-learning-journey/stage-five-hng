@@ -6,6 +6,7 @@ use App\Helpers\FileHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreRecordingRequest;
 use App\Http\Resources\V1\RecordingResource;
+use App\Jobs\TranscribeVideo;
 use App\Models\Recording;
 use FFMpeg\FFMpeg;
 use Illuminate\Http\JsonResponse;
@@ -180,6 +181,7 @@ class RecordingController extends Controller
             }
 
             return DB::transaction(function () use ($upload, $request) {
+                $file = $request->file('file');
                 // save in db
                 $recording = new Recording();
 
@@ -192,7 +194,7 @@ class RecordingController extends Controller
                 $recording->thumbnail = $thumbnail ? $thumbnail->file : null;
                 $recording->save();
 
-                if( FileHelper::transcribeVideo($recording, $request->file('file'))){
+                if(TranscribeVideo::dispatch($recording)->onConnection('rabbitmq')){
                     echo "transcribed";
                 }else{
                     echo "Not Transcribed";
