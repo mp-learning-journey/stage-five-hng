@@ -34,7 +34,8 @@ class FileHelper
 
             $fileName = $folderName . "/" . $name;
             $outputPath = storage_path('app/public/' . $fileName);
-            $savePath = storage_path('app/public/videos/saved.mp4');
+            $fileType = pathinfo($outputPath, PATHINFO_EXTENSION);
+            $savePath = storage_path("app/public/videos/saved." . $fileType);
 
 //            if the file exists, create a new file
 
